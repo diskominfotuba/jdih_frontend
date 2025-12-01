@@ -3,7 +3,7 @@ import Link from 'next/link';
 export default function RegisterSuccess() {
     return (
         <main className="section" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center' }}>
-            <div className="container text-center">
+            <div className="container text-center" style={{ marginTop: '1rem' }}>
                 <div style={{
                     display: 'inline-flex',
                     alignItems: 'center',
