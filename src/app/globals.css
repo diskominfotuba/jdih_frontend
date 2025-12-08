@@ -726,3 +726,108 @@ img {
     text-align: center;
     color: var(--slate-500);
 }
+
+/* Privacy Policy Page */
+.privacy-content {
+    max-width: 56rem;
+    margin: 0 auto;
+    background: var(--white);
+    padding: 3rem;
+    border-radius: 1.5rem;
+    box-shadow: var(--shadow-xl);
+}
+
+@media (max-width: 768px) {
+    .privacy-content {
+        padding: 2rem 1.5rem;
+    }
+}
+
+.privacy-intro {
+    border-bottom: 2px solid var(--slate-100);
+    padding-bottom: 2rem;
+}
+
+.privacy-section {
+    margin-top: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--slate-100);
+}
+
+.privacy-section:last-of-type {
+    border-bottom: none;
+}
+
+.privacy-section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--brand-600);
+    margin-bottom: 1rem;
+}
+
+.privacy-subsection-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--slate-700);
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.privacy-text {
+    font-size: 1rem;
+    color: var(--slate-600);
+    line-height: 1.8;
+    margin-bottom: 1rem;
+}
+
+.privacy-list {
+    list-style: disc;
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.privacy-list li {
+    font-size: 1rem;
+    color: var(--slate-600);
+    line-height: 1.8;
+    margin-bottom: 0.5rem;
+}
+
+.contact-info {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.contact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--slate-50);
+    border-radius: 0.75rem;
+    border: 1px solid var(--slate-200);
+}
+
+.contact-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--brand-600);
+    flex-shrink: 0;
+    margin-top: 0.25rem;
+}
+
+.contact-item div {
+    font-size: 0.875rem;
+    color: var(--slate-600);
+    line-height: 1.6;
+}
+
+.privacy-consent {
+    background: var(--brand-50);
+    padding: 2rem;
+    border-radius: 1rem;
+    border: 1px solid var(--brand-200);
+    margin-top: 2rem;
+}
