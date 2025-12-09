@@ -17,7 +17,7 @@ export default function VisidanMisi() {
 
           <div className="space-y-8 text-gray-800 leading-relaxed">
             <div className="bg-white p-6 rounded-xl shadow-sm border">
-              <p className="font-semibold text-lg">
+              <p >
                 Jaringan Dokumentasi dan Informasi Hukum atau disingakat JDIH adalah: 
                 Wadah pendayagunaan bersama atas dokumen hukum secara tertib, terpadu, 
                 dan berkesinambungan. Merupakan sarana pemberian pelayanan informasi hukum 
