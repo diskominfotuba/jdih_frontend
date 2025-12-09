@@ -9,7 +9,6 @@ export default function SekilasSejarah() {
       <main className="flex-grow pt-28 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
 
-          {/* Header */}
           <div className="mb-10 text-center">
             <h1 className="text-3xl font-bold text-gray-900 mb-3">
               Sekilas Sejarah
@@ -19,10 +18,8 @@ export default function SekilasSejarah() {
             </p>
           </div>
 
-          {/* Main Content */}
           <div className="space-y-8 text-gray-800 leading-relaxed">
 
-            {/* Card ringkas paragraf awal */}
             <div className="bg-white shadow-sm p-6 rounded-xl border">
               <p>
                 Pembentukan Jaringan Dokumentasi dan Informasi Hukum Nasional (JDIHN),
@@ -61,7 +58,6 @@ export default function SekilasSejarah() {
               </ul>
             </div>
 
-            {/* Paragraf panjang diformat dengan container agar nyaman dibaca */}
             <div className="bg-white p-6 rounded-xl shadow-sm border space-y-6">
               <p>
                 Pada tahun 1978 dilaksanakan Lokakarya tentang “Organisasi dan Komunikasi Sistem

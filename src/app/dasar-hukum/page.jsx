@@ -9,7 +9,6 @@ export default function DasarHukum() {
       <main className="flex-grow pt-28 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
 
-          {/* Header */}
           <div className="mb-10 text-center">
             <h1 className="text-3xl font-bold text-gray-900 mb-3">
               Dasar Hukum
@@ -20,7 +19,6 @@ export default function DasarHukum() {
             </p>
           </div>
 
-          {/* Content Card */}
           <div className="bg-white p-6 rounded-xl shadow-sm border">
             <ol className="list-decimal ml-6 space-y-4 text-gray-800 leading-relaxed">
               <li className=" transition">
