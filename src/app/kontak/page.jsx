@@ -9,7 +9,6 @@ export default function Kontak() {
       <main className="flex-grow pt-28 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
 
-          {/* Header */}
           <div className="mb-10 text-center">
             <h1 className="text-4xl font-extrabold text-gray-900 mb-3">
               Kontak Kami
@@ -19,7 +18,6 @@ export default function Kontak() {
             </p>
           </div>
 
-          {/* Card Kontak */}
           <div className="bg-white shadow-lg rounded-2xl p-8 sm:p-10 space-y-6 border border-gray-100">
 
             <p className="text-lg font-semibold text-gray-800">

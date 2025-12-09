@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const profileRef = useRef(null);
+  const pathname = usePathname();
 
   const handleLinkClick = () => {
     setIsOpen(false);
@@ -25,6 +27,18 @@ const Navbar = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const getLinkClassName = (path) => {
+    return pathname === path
+      ? "text-primary font-bold px-3 py-2 rounded-md text-sm font-medium transition-colors"
+      : "text-gray-900 font-bold hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors";
+  };
+
+  const getMobileLinkClassName = (path) => {
+    return pathname === path
+      ? "bg-primary text-white block px-3 py-2 rounded-md text-base font-medium"
+      : "block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50";
+  };
 
   return (
     <nav className="bg-white shadow-md fixed w-full z-50 top-0">
@@ -49,21 +63,21 @@ const Navbar = () => {
               <Link
                 href="/"
                 onClick={handleLinkClick}
-                className="text-gray-900 font-bold hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                className={getLinkClassName("/")}
               >
                 BERANDA
               </Link>
               <Link
                 href="/produk-hukum"
                 onClick={handleLinkClick}
-                className="text-gray-900 font-bold hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                className={getLinkClassName("/produk-hukum")}
               >
                 PRODUK HUKUM
               </Link>
               <Link
                 href="/berita"
                 onClick={handleLinkClick}
-                className="text-gray-900 font-bold hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                className={getLinkClassName("/berita")}
               >
                 BERITA
               </Link>
@@ -130,7 +144,7 @@ const Navbar = () => {
               <Link
                 href="/kontak"
                 onClick={handleLinkClick}
-                className="text-gray-900 font-bold hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                className={getLinkClassName("/kontak")}
               >
                 KONTAK
               </Link>
@@ -190,21 +204,21 @@ const Navbar = () => {
             <Link
               href="/"
               onClick={handleLinkClick}
-              className="bg-primary text-white block px-3 py-2 rounded-md text-base font-medium"
+              className={getMobileLinkClassName("/")}
             >
               Beranda
             </Link>
             <Link
               href="/produk-hukum"
               onClick={handleLinkClick}
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50"
+              className={getMobileLinkClassName("/produk-hukum")}
             >
               Produk Hukum
             </Link>
             <Link
               href="/berita"
               onClick={handleLinkClick}
-              className="text-gray-600 hover:bg-gray-50 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium"
+              className={getMobileLinkClassName("/berita")}
             >
               Berita
             </Link>
@@ -275,7 +289,7 @@ const Navbar = () => {
             <Link
               href="/kontak"
               onClick={handleLinkClick}
-              className="text-gray-600 hover:bg-gray-50 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium"
+              className={getMobileLinkClassName("/kontak")}
             >
               Kontak
             </Link>
