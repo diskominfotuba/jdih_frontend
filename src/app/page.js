@@ -430,16 +430,17 @@ export default function Home() {
                     <div className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
                       <div className="h-48 bg-gray-200 relative">
                         {item.thumbnail ? (
-                          <div className="w-full h-full flex items-center justify-center bg-gray-300 text-gray-500">
-                            Image Placeholder
-                          </div>
-                        ) : (
                           <Image
                             src={item.thumbnail}
                             alt={item.title}
                             fill
+                            unoptimized
                             className="object-cover group-hover:scale-105 transition-transform duration-300"
                           />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-gray-300 text-gray-500">
+                            Image Placeholder
+                          </div>
                         )}
                       </div>
                       <div className="p-6 flex flex-col flex-grow">
