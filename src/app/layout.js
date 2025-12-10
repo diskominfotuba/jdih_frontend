@@ -3,8 +3,8 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
 export const metadata = {
-  title: 'Samudra Wasesa - Internet Cepat Tanpa Batas',
-  description: 'Layanan internet provider tercepat dan terstabil di Indonesia. Paket internet murah untuk rumah dan kantor.',
+  title: 'JDIH Kabupaten Tulang Bawang',
+  description: 'Jaringan Dokumentasi dan Informasi Hukum Kabupaten Tulang Bawang',
 };
 
 export default function RootLayout({ children }) {

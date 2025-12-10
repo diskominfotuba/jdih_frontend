@@ -6,6 +6,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import bannerImage from "../assets/banner_jdih_tuba.jpg";
+import jdihNasional from "../assets/jdih_nasional.png";
+import jdihLampung from "../assets/jdih_lampung.png";
+import tulangBawang from "../assets/tulang.png";
 import { useEffect } from "react";
 
 //SERVICE
@@ -333,6 +336,79 @@ export default function Home() {
                     </a>
                   </div>
                 </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Grafik Produk Hukum */}
+        <section className="py-16 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-10 text-center">
+              Grafik Produk Hukum
+            </h2>
+            <div className="bg-white p-8 rounded-lg shadow-md text-center">
+              <p className="text-gray-500 text-lg">
+                Grafik produk hukum akan ditampilkan di sini.
+              </p>
+              {/* Placeholder for a chart component */}
+              <div className="mt-6 h-64 bg-gray-100 rounded-md flex items-center justify-center text-gray-400">
+                [Chart Placeholder]
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Link Terkait */}
+        <section className="py-16 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-10 text-center">
+              Link Terkait
+            </h2>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 justify-items-center">
+              {[
+                {
+                  img: jdihNasional,
+                  title: "JDIHN",
+                  href: "https://jdihn.go.id/",
+                },
+                {
+                  img: jdihLampung,
+                  title: "JDIH LAMPUNG",
+                  href: "https://jdih.lampungprov.go.id/",
+                },
+                {
+                  img: tulangBawang,
+                  title: "JDIH TULANG BAWANG",
+                  href: "https://jdih-tulangbawangkab.go.id/",
+                },
+                {
+                  img: tulangBawang,
+                  title: "JDIH DPRD TULANG BAWANG",
+                  href: "https://dprd.tulangbawangkab.go.id",
+                },
+              ].map((item, i) => (
+                <a
+                  key={i}
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-white w-full max-w-[240px] p-6 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-2 transition-all duration-300 flex flex-col items-center justify-between min-h-[260px] text-center"
+                >
+                  <div className="w-32 h-32 flex items-center justify-center mb-4">
+                    <Image
+                      src={item.img}
+                      alt={item.title}
+                      width={128}
+                      height={128}
+                      className="w-full h-full object-contain transition-transform duration-300 hover:scale-110"
+                    />
+                  </div>
+                  <h3 className="text-[14px] font-bold text-gray-900 leading-tight">
+                    {item.title}
+                  </h3>
+                </a>
               ))}
             </div>
           </div>
