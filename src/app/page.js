@@ -375,8 +375,8 @@ export default function Home() {
             </div>
 
             <div className="mt-8 text-center md:hidden">
-              <a
-                href="#"
+              <Link
+                href="/produk-hukum"
                 className="inline-flex items-center text-primary font-semibold hover:text-blue-700 transition-colors"
               >
                 Lihat Semua
@@ -393,7 +393,7 @@ export default function Home() {
                     d="M17 8l4 4m0 0l-4 4m4-4H3"
                   />
                 </svg>
-              </a>
+              </Link>
             </div>
           </div>
         </section>
