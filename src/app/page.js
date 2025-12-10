@@ -43,6 +43,8 @@ export default function Home() {
   const [products, setProducts] = useState([]);
   const [news, setNews] = useState([]);
   const [chartData, setChartData] = useState(null);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [totalNews, setTotalNews] = useState(0);
 
   //STATE LOADING
   const [loading, setLoading] = useState(false);
@@ -59,6 +61,7 @@ export default function Home() {
     try {
       const response = await ProductService.get();
       setProducts(response.data.data);
+      setTotalProducts(response.data.pagination.total);
     } catch (error) {
       setError(error);
     } finally {
@@ -66,12 +69,13 @@ export default function Home() {
     }
   };
 
-  //GET DATA BERITA
+  //GET DATA BERITAs
   const getNews = async () => {
     setLoadingPost(true);
     try {
       const response = await PostService.get();
       setNews(response.data.data);
+      setTotalNews(response.data.pagination.total);
     } catch (error) {
       console.log(error.message);
       setError(error.message);
@@ -133,7 +137,7 @@ export default function Home() {
   const categories = [
     {
       title: "Peraturan",
-      count: products?.length || 0,
+      count: totalProducts,
       icon: <FileText className="w-6 h-6" />,
       color: "bg-blue-100 text-blue-600",
     },
@@ -145,7 +149,7 @@ export default function Home() {
     },
     {
       title: "Artikel Hukum",
-      count: news.length || 0,
+      count: totalNews,
       icon: <Pencil className="w-6 h-6" />,
       color: "bg-purple-100 text-purple-600",
     },
@@ -343,7 +347,7 @@ export default function Home() {
                               d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
                             />
                           </svg>
-                          Unduh
+                          Lihat Detail
                         </div>
                       </div>
                     </div>

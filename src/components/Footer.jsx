@@ -84,7 +84,9 @@ const Footer = () => {
             <ul className="space-y-2">
               <li>
                 <a
-                  href="https.jdihn.go.id/"
+                  href="https://jdihn.go.id"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-gray-400 hover:text-white text-sm transition-colors"
                 >
                   JDIHN
@@ -92,7 +94,9 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  href="https.jdih.lampungprov.go.id/"
+                  href="https://jdih.lampungprov.go.id"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-gray-400 hover:text-white text-sm transition-colors"
                 >
                   JDIHN LAMPUNG
@@ -100,7 +104,9 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  href="https.jdih-tulangbawangkab.go.id/"
+                  href="https://jdih-tulangbawangkab.go.id"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-gray-400 hover:text-white text-sm transition-colors"
                 >
                   JDIHN TULANG BAWANG
@@ -108,7 +114,9 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  href="https.dprd.tulangbawangkab.go.id"
+                  href="https://dprd.tulangbawangkab.go.id"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-gray-400 hover:text-white text-sm transition-colors"
                 >
                   JDIHN DPRD TULANG BAWANG
@@ -220,7 +228,6 @@ const Footer = () => {
                 </svg>
                 <span>JL.Cemara Komplek Perkantoran Pemda Tulang Bawang</span>
               </li>
-
             </ul>
           </div>
         </div>
