@@ -59,7 +59,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="/profil"
+                  href="#"
                   className="text-gray-400 hover:text-white text-sm transition-colors"
                 >
                   Profil
@@ -164,9 +164,43 @@ const Footer = () => {
               Kontak Kami
             </h3>
             <ul className="space-y-3 text-sm text-gray-400">
+              <li className="flex items-center gap-2">
+                <svg
+                  className="w-5 h-5 text-white flex-shrink-0"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M3 8l7.89 5.26 2.22 0L21 8M5 19h14a2 2 0 002-2V7H5a2 2 0 00-2 2v10z"
+                  />
+                </svg>
+                <span className="break-all">hukumtuba@gmail.com</span>
+              </li>
+
+              <li className="flex items-center gap-2">
+                <svg
+                  className="w-5 h-5 text-white flex-shrink-0"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M3 5a2 2 0 012-2h3.28l1.498 4.493-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257 4.493 1.498V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                  />
+                </svg>
+                <span>(0726)7575156</span>
+              </li>
+
               <li className="flex items-start gap-2">
                 <svg
-                  className="w-5 h-5 text-primary mt-0.5 flex-shrink-0"
+                  className="w-5 h-5 text-white mt-0.5 flex-shrink-0"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -187,39 +221,6 @@ const Footer = () => {
                 <span>JL.Cemara Komplek Perkantoran Pemda Tulang Bawang</span>
               </li>
 
-              <li className="flex items-center gap-2">
-                <svg
-                  className="w-5 h-5 text-primary flex-shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M3 5a2 2 0 012-2h3.28l1.498 4.493-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257 4.493 1.498V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                  />
-                </svg>
-                <span>0726 7575156</span>
-              </li>
-
-              <li className="flex items-center gap-2">
-                <svg
-                  className="w-5 h-5 text-primary flex-shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M3 8l7.89 5.26 2.22 0L21 8M5 19h14a2 2 0 002-2V7H5a2 2 0 00-2 2v10z"
-                  />
-                </svg>
-                <span className="break-all">hukumtuba@gmail.com</span>
-              </li>
             </ul>
           </div>
         </div>

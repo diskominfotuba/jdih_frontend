@@ -276,10 +276,13 @@ export default function Home() {
                   Bawang
                 </p>
               </div>
-              <a href="#" className="hidden md:flex items-center text-gray-900">
+              <Link
+                href="/produk-hukum"
+                className="hidden md:flex items-center text-gray-900 font-medium hover:text-blue-600 transition-all group"
+              >
                 Lihat Semua
                 <svg
-                  className="w-5 h-5 ml-2"
+                  className="w-5 h-5 ml-1 transform transition-transform duration-200 group-hover:translate-x-1"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -291,9 +294,9 @@ export default function Home() {
                     d="M17 8l4 4m0 0l-4 4m4-4H3"
                   />
                 </svg>
-              </a>
+              </Link>
             </div>
-
+            
             <div className="grid gap-6">
               {products.map((product) => (
                 <Link
@@ -373,49 +376,63 @@ export default function Home() {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {news.map((item) => (
-                <div
+                <Link
+                  href={`/berita/${item.id}`}
                   key={item.id}
-                  className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300"
+                  className="block group"
+                  onClick={() => {
+                    sessionStorage.setItem(
+                      `post-${item.id}`,
+                      JSON.stringify(item)
+                    );
+                  }}
                 >
-                  <div className="h-48 bg-gray-200 relative">
-                    {/* Replace with actual image component or img tag */}
-                    <div className="w-full h-full bg-gray-300 flex items-center justify-center text-gray-500">
-                      Image Placeholder
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <div className="flex items-center gap-3 mb-2">
-                      <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                        {item.category.name}
-                      </span>
-                      <span className="text-sm text-gray-500">
-                        {formatDate(item.created_at, "long")}
-                      </span>
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 hover:text-primary cursor-pointer">
-                      {item.title}
-                    </h3>
-                    <a
-                      href="#"
-                      className="text-primary font-medium hover:text-blue-800 text-sm flex items-center"
-                    >
-                      Baca Selengkapnya
-                      <svg
-                        className="w-4 h-4 ml-1"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M9 5l7 7-7 7"
+                  <div className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
+                    <div className="h-48 bg-gray-200 relative">
+                      {item.thumbnail ? (
+                        <div className="w-full h-full flex items-center justify-center bg-gray-300 text-gray-500">
+                          Image Placeholder
+                        </div>
+                      ) : (
+                        <Image
+                          src={item.thumbnail}
+                          alt={item.title}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
                         />
-                      </svg>
-                    </a>
+                      )}
+                    </div>
+                    <div className="p-6 flex flex-col flex-grow">
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                          {item.category.name}
+                        </span>
+                        <span className="text-sm text-gray-500">
+                          {formatDate(item.created_at, "long")}
+                        </span>
+                      </div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-primary transition-colors flex-grow">
+                        {item.title}
+                      </h3>
+                      <div className="text-primary font-medium hover:text-blue-800 text-sm flex items-center mt-auto">
+                        Baca Selengkapnya
+                        <svg
+                          className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
@@ -478,11 +495,7 @@ export default function Home() {
                   href={item.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group bg-white w-full max-w-[240px] p-6 rounded-xl shadow-md 
-                            hover:bg-[#00235C] hover:shadow-xl hover:-translate-y-2 
-                            transition-all duration-300 flex flex-col items-center 
-                            justify-between min-h-[240px] text-center cursor-pointer
-                          "
+                  className="group bg-white w-full max-w-[240px] p-6 rounded-xl shadow-md hover:bg-[#00235C] hover:shadow-xl hover:-translate-y-2 transition-all duration-300 flex flex-col items-center justify-between min-h-[240px] text-center cursor-pointer"
                 >
                   <div className="w-28 h-28 flex items-center justify-center mb-2">
                     <Image
