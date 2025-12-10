@@ -19,6 +19,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { FileText, Scale, Pencil, Volume2 } from "lucide-react";
 
 //SERVICE
 import { ProductService } from "../services/ProductService";
@@ -133,25 +134,25 @@ export default function Home() {
     {
       title: "Peraturan",
       count: products?.length || 0,
-      icon: "📜",
+      icon: <FileText className="w-6 h-6" />,
       color: "bg-blue-100 text-blue-600",
     },
     {
       title: "Monografi Hukum",
       count: 0,
-      icon: "⚖️",
+      icon: <Scale className="w-6 h-6" />,
       color: "bg-green-100 text-green-600",
     },
     {
       title: "Artikel Hukum",
       count: news.length || 0,
-      icon: "📝",
+      icon: <Pencil className="w-6 h-6" />,
       color: "bg-purple-100 text-purple-600",
     },
     {
       title: "Yurisprudensi",
       count: 0,
-      icon: "📢",
+      icon: <Volume2 className="w-6 h-6" />,
       color: "bg-orange-100 text-orange-600",
     },
   ];
@@ -296,7 +297,7 @@ export default function Home() {
                 </svg>
               </Link>
             </div>
-            
+
             <div className="grid gap-6">
               {products.map((product) => (
                 <Link
@@ -462,59 +463,60 @@ export default function Home() {
 
         {/* Link Terkait */}
         <section className="py-16 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-10 text-center">
-              Link Terkait
-            </h2>
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 className="text-3xl font-bold text-gray-900 mb-10 text-center">
+      Link Terkait
+    </h2>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 justify-items-center">
-              {[
-                {
-                  img: jdihNasional,
-                  title: "JDIHN",
-                  href: "https.jdihn.go.id/",
-                },
-                {
-                  img: jdihLampung,
-                  title: "JDIH LAMPUNG",
-                  href: "https.jdih.lampungprov.go.id/",
-                },
-                {
-                  img: tulangBawang,
-                  title: "JDIH TULANG BAWANG",
-                  href: "https.jdih-tulangbawangkab.go.id/",
-                },
-                {
-                  img: tulangBawang,
-                  title: "JDIH DPRD TULANG BAWANG",
-                  href: "https.dprd.tulangbawangkab.go.id",
-                },
-              ].map((item, i) => (
-                <a
-                  key={i}
-                  href={item.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group bg-white w-full max-w-[240px] p-6 rounded-xl shadow-md hover:bg-[#00235C] hover:shadow-xl hover:-translate-y-2 transition-all duration-300 flex flex-col items-center justify-between min-h-[240px] text-center cursor-pointer"
-                >
-                  <div className="w-28 h-28 flex items-center justify-center mb-2">
-                    <Image
-                      src={item.img}
-                      alt={item.title}
-                      width={112}
-                      height={112}
-                      className="w-full h-full object-contain pointer-events-none transition-transform duration-300 group-hover:scale-105"
-                    />
-                  </div>
-
-                  <h3 className="text-[13px] font-semibold text-gray-900 leading-tight transition-all group-hover:text-white">
-                    {item.title}
-                  </h3>
-                </a>
-              ))}
-            </div>
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 justify-items-center">
+      {[
+        {
+          img: jdihNasional,
+          title: "JDIH NASIONAL",
+          href: "https://jdihn.go.id",
+        },
+        {
+          img: jdihLampung,
+          title: "JDIH LAMPUNG",
+          href: "https://jdih.lampungprov.go.id",
+        },
+        {
+          img: tulangBawang,
+          title: "JDIH TULANG BAWANG",
+          href: "https://jdih-tulangbawangkab.go.id",
+        },
+        {
+          img: tulangBawang,
+          title: "JDIH DPRD TULANG BAWANG",
+          href: "https://dprd.tulangbawangkab.go.id",
+        },
+      ].map((item, i) => (
+        <a
+          key={i}
+          href={item.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group bg-white w-full max-w-[240px] p-6 rounded-xl shadow-md hover:bg-[#00235C] hover:shadow-xl hover:-translate-y-2 transition-all duration-300 flex flex-col items-center justify-between min-h-[240px] text-center cursor-pointer"
+        >
+          <div className="w-28 h-28 flex items-center justify-center mb-2">
+            <Image
+              src={item.img}
+              alt={item.title}
+              width={112}
+              height={112}
+              className="w-full h-full object-contain pointer-events-none transition-transform duration-300 group-hover:scale-105"
+            />
           </div>
-        </section>
+
+          <h3 className="text-[13px] font-semibold text-gray-900 leading-tight transition-all group-hover:text-white">
+            {item.title}
+          </h3>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
       </main>
     </div>
   );
