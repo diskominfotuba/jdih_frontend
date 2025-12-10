@@ -1,10 +1,44 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const profileRef = useRef(null);
+  const pathname = usePathname();
+
+  const handleLinkClick = () => {
+    setIsOpen(false);
+    setIsProfileOpen(false);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setIsProfileOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const getLinkClassName = (path) => {
+    return pathname === path
+      ? "text-primary font-bold px-3 py-2 rounded-md text-sm font-medium transition-colors"
+      : "text-gray-900 font-bold hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors";
+  };
+
+  const getMobileLinkClassName = (path) => {
+    return pathname === path
+      ? "bg-primary text-white block px-3 py-2 rounded-md text-base font-medium"
+      : "block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50";
+  };
 
   return (
     <nav className="bg-white shadow-md fixed w-full z-50 top-0">
@@ -28,31 +62,89 @@ const Navbar = () => {
             <div className="hidden md:ml-10 md:flex md:space-x-8">
               <Link
                 href="/"
-                className="text-gray-900 font-bold hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                onClick={handleLinkClick}
+                className={getLinkClassName("/")}
               >
                 BERANDA
               </Link>
               <Link
                 href="/produk-hukum"
-                className="text-gray-900 font-bold hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                onClick={handleLinkClick}
+                className={getLinkClassName("/produk-hukum")}
               >
                 PRODUK HUKUM
               </Link>
               <Link
                 href="/berita"
-                className="text-gray-900 font-bold hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                onClick={handleLinkClick}
+                className={getLinkClassName("/berita")}
               >
                 BERITA
               </Link>
+              <div className="relative" ref={profileRef}>
+                <button
+                  onClick={() => setIsProfileOpen(!isProfileOpen)}
+                  className="text-gray-900 font-bold hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center"
+                >
+                  PROFIL
+                  <svg
+                    className="-mr-1 ml-2 h-5 w-5"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+                {isProfileOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-20">
+                    <Link
+                      href="/sekilas-sejarah"
+                      onClick={handleLinkClick}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      Sekilas Sejarah
+                    </Link>
+                    <Link
+                      href="/dasar-hukum"
+                      onClick={handleLinkClick}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      Dasar Hukum
+                    </Link>
+                    <Link
+                      href="/visi-dan-misi"
+                      onClick={handleLinkClick}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      Visi dan Misi
+                    </Link>
+                    <Link
+                      href="/struktur.pdf"
+                      onClick={handleLinkClick}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      Struktur Organisasi
+                    </Link>
+                    <Link
+                      href="/sop.pdf"
+                      onClick={handleLinkClick}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      SOP
+                    </Link>
+                  </div>
+                )}
+              </div>
               <Link
-                href="#"
-                className="text-gray-900 font-bold hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors"
-              >
-                PROFIL
-              </Link>
-              <Link
-                href="#"
-                className="text-gray-900 font-bold hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                href="/kontak"
+                onClick={handleLinkClick}
+                className={getLinkClassName("/kontak")}
               >
                 KONTAK
               </Link>
@@ -111,31 +203,93 @@ const Navbar = () => {
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             <Link
               href="/"
-              className="bg-primary text-white block px-3 py-2 rounded-md text-base font-medium"
+              onClick={handleLinkClick}
+              className={getMobileLinkClassName("/")}
             >
               Beranda
             </Link>
             <Link
               href="/produk-hukum"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50"
+              onClick={handleLinkClick}
+              className={getMobileLinkClassName("/produk-hukum")}
             >
               Produk Hukum
             </Link>
             <Link
-              href="#"
-              className="text-gray-600 hover:bg-gray-50 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium"
+              href="/berita"
+              onClick={handleLinkClick}
+              className={getMobileLinkClassName("/berita")}
             >
               Berita
             </Link>
+            <div ref={profileRef}>
+              <button
+                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                className="w-full text-left text-gray-600 hover:bg-gray-50 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium"
+              >
+                <div className="flex justify-between">
+                  Profil
+                  <svg
+                    className={`h-5 w-5 transform ${
+                      isProfileOpen ? "rotate-180" : ""
+                    }`}
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+              </button>
+              {isProfileOpen && (
+                <div className="pl-4">
+                  <Link
+                    href="/sekilas-sejarah"
+                    onClick={handleLinkClick}
+                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50"
+                  >
+                    Sekilas Sejarah
+                  </Link>
+                  <Link
+                    href="/dasar-hukum"
+                    onClick={handleLinkClick}
+                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50"
+                  >
+                    Dasar Hukum
+                  </Link>
+                  <Link
+                    href="/visi-dan-misi"
+                    onClick={handleLinkClick}
+                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50"
+                  >
+                    Visi dan Misi
+                  </Link>
+                  <Link
+                    href="/struktur.pdf"
+                    onClick={handleLinkClick}
+                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50"
+                  >
+                    Struktur Organisasi
+                  </Link>
+                  <Link
+                    href="/sop.pdf"
+                    onClick={handleLinkClick}
+                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50"
+                  >
+                    SOP
+                  </Link>
+                </div>
+              )}
+            </div>
             <Link
-              href="#"
-              className="text-gray-600 hover:bg-gray-50 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium"
-            >
-              Profil
-            </Link>
-            <Link
-              href="#"
-              className="text-gray-600 hover:bg-gray-50 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium"
+              href="/kontak"
+              onClick={handleLinkClick}
+              className={getMobileLinkClassName("/kontak")}
             >
               Kontak
             </Link>
