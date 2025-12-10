@@ -223,7 +223,7 @@ const Navbar = () => {
             <div ref={profileRef}>
               <button
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className="w-full text-left text-gray-600 hover:bg-gray-50 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium"
+                className="w-full text-left text-gray-600 hover:bg-gray-50 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-bold"
               >
                 <div className="flex justify-between">
                   Profil
