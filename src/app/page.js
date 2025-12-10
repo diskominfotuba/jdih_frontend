@@ -1,7 +1,7 @@
 "use client";
 
 import Navbar from "../components/Navbar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -9,7 +9,16 @@ import bannerImage from "../assets/banner_jdih_tuba.jpg";
 import jdihNasional from "../assets/jdih_nasional.png";
 import jdihLampung from "../assets/jdih_lampung.png";
 import tulangBawang from "../assets/tulang.png";
-import { useEffect } from "react";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
 
 //SERVICE
 import { ProductService } from "../services/ProductService";
@@ -18,15 +27,26 @@ import { ProductService } from "../services/ProductService";
 import { formatDate } from "../helpers/formatDate";
 import { PostService } from "@/services/PostService";
 
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   //STATE DATA
   const [products, setProducts] = useState([]);
   const [news, setNews] = useState([]);
+  const [chartData, setChartData] = useState(null);
 
   //STATE LOADING
   const [loading, setLoading] = useState(false);
   const [loadingPost, setLoadingPost] = useState(false);
+  const [loadingChart, setLoadingChart] = useState(true);
 
   //STATE ERROR
   const [error, setError] = useState(null);
@@ -59,10 +79,49 @@ export default function Home() {
     }
   };
 
+  //GET DATA FOR CHART
+  const getChartData = async () => {
+    setLoadingChart(true);
+    try {
+      const response = await ProductService.get({ per_page: 1000 });
+      const products = response.data.data;
+
+      const countsByYear = products.reduce((acc, product) => {
+        const year = new Date(product.created_at).getFullYear();
+        if (year) {
+          acc[year] = (acc[year] || 0) + 1;
+        }
+        return acc;
+      }, {});
+
+      const sortedYears = Object.keys(countsByYear).sort();
+
+      const data = {
+        labels: sortedYears,
+        datasets: [
+          {
+            label: "Jumlah Produk Hukum",
+            data: sortedYears.map((year) => countsByYear[year]),
+            backgroundColor: "#00235C",
+            borderColor: "rgba(0, 35, 92, 1)",
+            borderWidth: 1,
+            borderRadius: 5,
+          },
+        ],
+      };
+      setChartData(data);
+    } catch (error) {
+      console.error("Error fetching chart data:", error);
+    } finally {
+      setLoadingChart(false);
+    }
+  };
+
   //RUN GET DATA
   useEffect(() => {
     getData();
     getNews();
+    getChartData();
   }, []);
 
   const handleSearch = (e) => {
@@ -96,6 +155,27 @@ export default function Home() {
       color: "bg-orange-100 text-orange-600",
     },
   ];
+
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top",
+      },
+      title: {
+        display: true,
+        text: "Jumlah Produk Hukum per Tahun",
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          stepSize: 1,
+        },
+      },
+    },
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -342,19 +422,23 @@ export default function Home() {
         </section>
 
         {/* Grafik Produk Hukum */}
-        <section className="py-16 bg-gray-50">
+        <section className="py-16 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-10 text-center">
               Grafik Produk Hukum
             </h2>
-            <div className="bg-white p-8 rounded-lg shadow-md text-center">
-              <p className="text-gray-500 text-lg">
-                Grafik produk hukum akan ditampilkan di sini.
-              </p>
-              {/* Placeholder for a chart component */}
-              <div className="mt-6 h-64 bg-gray-100 rounded-md flex items-center justify-center text-gray-400">
-                [Chart Placeholder]
-              </div>
+            <div className="bg-white p-8 rounded-lg shadow-md">
+              {loadingChart ? (
+                <div className="text-center text-gray-500">
+                  Memuat data grafik...
+                </div>
+              ) : chartData ? (
+                <Bar options={chartOptions} data={chartData} />
+              ) : (
+                <div className="text-center text-gray-500">
+                  Data tidak tersedia.
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -371,22 +455,22 @@ export default function Home() {
                 {
                   img: jdihNasional,
                   title: "JDIHN",
-                  href: "https://jdihn.go.id/",
+                  href: "https.jdihn.go.id/",
                 },
                 {
                   img: jdihLampung,
                   title: "JDIH LAMPUNG",
-                  href: "https://jdih.lampungprov.go.id/",
+                  href: "https.jdih.lampungprov.go.id/",
                 },
                 {
                   img: tulangBawang,
                   title: "JDIH TULANG BAWANG",
-                  href: "https://jdih-tulangbawangkab.go.id/",
+                  href: "https.jdih-tulangbawangkab.go.id/",
                 },
                 {
                   img: tulangBawang,
                   title: "JDIH DPRD TULANG BAWANG",
-                  href: "https://dprd.tulangbawangkab.go.id",
+                  href: "https.dprd.tulangbawangkab.go.id",
                 },
               ].map((item, i) => (
                 <a
@@ -394,18 +478,23 @@ export default function Home() {
                   href={item.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-white w-full max-w-[240px] p-6 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-2 transition-all duration-300 flex flex-col items-center justify-between min-h-[260px] text-center"
+                  className="group bg-white w-full max-w-[240px] p-6 rounded-xl shadow-md 
+                            hover:bg-[#00235C] hover:shadow-xl hover:-translate-y-2 
+                            transition-all duration-300 flex flex-col items-center 
+                            justify-between min-h-[240px] text-center cursor-pointer
+                          "
                 >
-                  <div className="w-32 h-32 flex items-center justify-center mb-4">
+                  <div className="w-28 h-28 flex items-center justify-center mb-2">
                     <Image
                       src={item.img}
                       alt={item.title}
-                      width={128}
-                      height={128}
-                      className="w-full h-full object-contain transition-transform duration-300 hover:scale-110"
+                      width={112}
+                      height={112}
+                      className="w-full h-full object-contain pointer-events-none transition-transform duration-300 group-hover:scale-105"
                     />
                   </div>
-                  <h3 className="text-[14px] font-bold text-gray-900 leading-tight">
+
+                  <h3 className="text-[13px] font-semibold text-gray-900 leading-tight transition-all group-hover:text-white">
                     {item.title}
                   </h3>
                 </a>

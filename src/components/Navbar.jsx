@@ -124,6 +124,7 @@ const Navbar = () => {
                       href="/struktur.pdf"
                       onClick={handleLinkClick}
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      target="_blank"
                     >
                       Struktur Organisasi
                     </Link>
@@ -131,6 +132,7 @@ const Navbar = () => {
                       href="/sop.pdf"
                       onClick={handleLinkClick}
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      target="_blank"
                     >
                       SOP
                     </Link>
@@ -269,6 +271,7 @@ const Navbar = () => {
                     href="/struktur.pdf"
                     onClick={handleLinkClick}
                     className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50"
+                    target="_blank"
                   >
                     Struktur Organisasi
                   </Link>
@@ -276,6 +279,7 @@ const Navbar = () => {
                     href="/sop.pdf"
                     onClick={handleLinkClick}
                     className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50"
+                    target="_blank"
                   >
                     SOP
                   </Link>
