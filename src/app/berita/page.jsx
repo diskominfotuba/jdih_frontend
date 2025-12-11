@@ -2,17 +2,16 @@
 
 import Navbar from "../../components/Navbar";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import BeritaSkeleton from "../../components/BeritaSkeleton";
-
 
 //SERVICE
 import { PostService } from "../../services/PostService";
 import { formatDate } from "@/helpers/formatDate";
 
-export default function Berita() {
+function BeritaContent() {
   const searchParams = useSearchParams();
   const search = searchParams.get("search");
   const [searchQuery, setSearchQuery] = useState(search ? search : "");
@@ -359,5 +358,26 @@ export default function Berita() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function Berita() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <Navbar />
+        <main className="flex-grow pt-28 pb-16 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[...Array(6)].map((_, index) => (
+                <BeritaSkeleton key={index} />
+              ))}
+            </div>
+          </div>
+        </main>
+      </div>
+    }>
+      <BeritaContent />
+    </Suspense>
   );
 }
