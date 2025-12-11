@@ -3,7 +3,7 @@ import Api from "./Api";
 export const PostService = {
   get: async (params = {}) => {
     try {
-      const response = await Api.get("/berita/opd/sub1", { params });
+      const response = await Api.get("/berita/opd/diskominfo", { params });
       return {
         success: true,
         data: response.data,

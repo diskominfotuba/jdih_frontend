@@ -3,6 +3,10 @@
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
+import logo from "../assets/logo-jdih-tuba.png";
+import Image from "next/image";
+
+
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,36 +34,28 @@ const Navbar = () => {
 
   const getLinkClassName = (path) => {
     return pathname === path
-      ? "text-primary font-bold px-3 py-2 rounded-md text-sm font-medium transition-colors"
-      : "text-gray-900 font-bold hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors";
+      ? "text-primary font-bold px-3 py-2 rounded-md text-sm font-bold transition-colors"
+      : "text-gray-900 font-bold hover:text-primary px-3 py-2 rounded-md text-sm font-bold transition-colors";
   };
 
   const getMobileLinkClassName = (path) => {
     return pathname === path
-      ? "bg-primary text-white block px-3 py-2 rounded-md text-base font-medium"
-      : "block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50";
+      ? "bg-primary text-white block px-3 py-2 rounded-md text-base font-bold"
+      : "block px-3 py-2 rounded-md text-base font-bold text-gray-700 hover:text-primary hover:bg-gray-50";
   };
 
   return (
     <nav className="bg-white shadow-md fixed w-full z-50 top-0">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-20">
-          <div className="flex items-center">
-            <div className="flex-shrink-0 flex items-center gap-3">
-              {/* Placeholder for Logo */}
-              <div className="w-10 h-10 bg-primary-500 text-gray-800 rounded-full flex items-center justify-center font-bold">
-                TB
-              </div>
-              <div className="flex flex-col">
-                <span className="font-bold text-xl text-gray-800 leading-none">
-                  JDIH
-                </span>
-                <span className="text-xs text-gray-500 font-medium">
-                  Kabupaten Tulang Bawang
-                </span>
-              </div>
+        <div className="flex items-center justify-between h-20 ">
+          <div className="flex-shrink-0 flex items-center gap-3">
+            {/* Placeholder for Logo */}
+            <div>
+              <Image src={logo} alt="Logo" width={180} height={180} />
             </div>
-            <div className="hidden md:ml-10 md:flex md:space-x-8">
+          </div>
+          <div className="flex-grow flex justify-center">
+            <div className="hidden md:flex md:space-x-8 font-bold">
               <Link
                 href="/"
                 onClick={handleLinkClick}
@@ -84,7 +80,7 @@ const Navbar = () => {
               <div className="relative" ref={profileRef}>
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
-                  className="text-gray-900 font-bold hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center"
+                  className="text-gray-900 font-bold hover:text-primary px-3 py-2 rounded-md text-sm font-bold transition-colors flex items-center cursor-pointer"
                 >
                   PROFIL
                   <svg
@@ -128,6 +124,7 @@ const Navbar = () => {
                       href="/struktur.pdf"
                       onClick={handleLinkClick}
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      target="_blank"
                     >
                       Struktur Organisasi
                     </Link>
@@ -135,6 +132,7 @@ const Navbar = () => {
                       href="/sop.pdf"
                       onClick={handleLinkClick}
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      target="_blank"
                     >
                       SOP
                     </Link>
@@ -225,7 +223,7 @@ const Navbar = () => {
             <div ref={profileRef}>
               <button
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className="w-full text-left text-gray-600 hover:bg-gray-50 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium"
+                className="w-full text-left text-gray-600 hover:bg-gray-50 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-bold"
               >
                 <div className="flex justify-between">
                   Profil
@@ -273,6 +271,7 @@ const Navbar = () => {
                     href="/struktur.pdf"
                     onClick={handleLinkClick}
                     className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50"
+                    target="_blank"
                   >
                     Struktur Organisasi
                   </Link>
@@ -280,6 +279,7 @@ const Navbar = () => {
                     href="/sop.pdf"
                     onClick={handleLinkClick}
                     className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50"
+                    target="_blank"
                   >
                     SOP
                   </Link>
