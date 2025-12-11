@@ -4,7 +4,7 @@ import Navbar from "../components/Navbar";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import bannerImage from "../assets/banner_jdih_tuba.jpg";
 import jdihNasional from "../assets/jdih_nasional.png";
 import jdihLampung from "../assets/jdih_lampung.png";
@@ -54,6 +54,7 @@ export default function Home() {
   //STATE ERROR
   const [error, setError] = useState(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   //GET DATA PRODUK
   const getData = async () => {
@@ -180,6 +181,12 @@ export default function Home() {
         },
       },
     },
+  };
+
+  // HANDLE DETAIL CLICK - SIMPAN DATA KE SESSIONSTORAGE
+  const handleDetailClick = (product) => {
+    sessionStorage.setItem("productDetail", JSON.stringify(product));
+    router.push(`/produk-hukum/${product.id}`);
   };
 
   return (
@@ -310,32 +317,36 @@ export default function Home() {
                 </div>
               ) : products.length > 0 ? (
                 products.map((product) => (
-                  <Link
-                    href={`/produk-hukum/${product.id}`}
-                    key={product.id}
-                    className="block group"
-                  >
-                    <div className="bg-gray-50 rounded-lg p-6 border border-gray-100 hover:shadow-md transition-shadow flex flex-col md:flex-row gap-6 items-start md:items-center group-hover:border-blue-200 transition-colors">
+                  <div key={product.id} className="group">
+                    <div className="bg-white rounded-xl p-6 border border-gray-100 hover:shadow-md hover:border-blue-200 transition-all flex flex-col md:flex-row gap-6 items-start md:items-center">
+                      {/* ---- Bagian Kiri ---- */}
                       <div className="flex-grow">
                         <div className="flex items-center gap-3 mb-2">
-                          <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                          <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
                             {product.bentuk_peraturan}
                           </span>
                           <span className="text-sm text-gray-500">
                             {formatDate(product.created_at, "long")}
                           </span>
                         </div>
-                        <h3 className="text-lg font-bold text-gray-900 mb-1 group-hover:text-primary transition-colors">
+
+                        <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors">
                           {product.judul}
                         </h3>
-                        <p className="text-sm text-gray-600">
+
+                        <p className="text-sm text-gray-600 font-medium">
                           Nomor Peraturan {product.nomor_peraturan}
                         </p>
                       </div>
-                      <div className="flex-shrink-0 mt-4 md:mt-0">
-                        <div className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 group-hover:bg-gray-50 group-hover:text-primary transition-colors shadow-sm">
+
+                      <div className="flex-shrink-0 mt-4 md:mt-0 flex gap-2">
+                        <button
+                          onClick={() => handleDetailClick(product)}
+                          className="flex items-center justify-center w-full md:w-auto px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-primary hover:text-white hover:border-primary transition-all"
+                        >
+                          Detail
                           <svg
-                            className="w-4 h-4 mr-2"
+                            className="w-4 h-4 ml-2"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -344,14 +355,38 @@ export default function Home() {
                               strokeLinecap="round"
                               strokeLinejoin="round"
                               strokeWidth="2"
-                              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                              d="M9 5l7 7-7 7"
                             />
                           </svg>
-                          Lihat Detail
-                        </div>
+                        </button>
+
+                        {/* Tombol Unduh — Only if file available */}
+                        {product.url_file && (
+                          <a
+                            href={product.url_file}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center px-4 py-2 bg-green-50 border border-green-200 rounded-lg text-sm font-medium text-green-700 hover:bg-green-100 hover:text-green-800 hover:border-green-300 transition-all shadow-sm"
+                          >
+                            Unduh
+                            <svg
+                              className="w-4 h-4 ml-2"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                              />
+                            </svg>
+                          </a>
+                        )}
                       </div>
                     </div>
-                  </Link>
+                  </div>
                 ))
               ) : (
                 <div className="col-span-full text-center py-12 bg-white rounded-xl border border-gray-100">
@@ -377,7 +412,6 @@ export default function Home() {
                 </div>
               )}
             </div>
-
             <div className="mt-8 text-center md:hidden">
               <Link
                 href="/produk-hukum"
