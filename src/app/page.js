@@ -30,8 +30,6 @@ import { PostService } from "@/services/PostService";
 import BeritaSkeleton from "../components/BeritaSkeleton";
 import ProductSkeleton from "../components/ProductSkeleton";
 
-
-
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -279,7 +277,7 @@ function HomeContent() {
           </div>
         </section>
 
-       {/* Latest Products */}
+        {/* Latest Products */}
         <section className="py-16 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-end mb-10">
@@ -625,14 +623,16 @@ function HomeContent() {
 
 export default function Home() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-          <p className="mt-4 text-gray-600">Memuat halaman...</p>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-white">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            <p className="mt-4 text-gray-600">Memuat halaman...</p>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <HomeContent />
     </Suspense>
   );
