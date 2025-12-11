@@ -313,7 +313,6 @@ function HomeContent() {
 
             <div className="grid gap-6">
               {loading ? (
-                // Skeleton Loading for Products
                 <>
                   {[...Array(3)].map((_, index) => (
                     <ProductSkeleton key={index} />
