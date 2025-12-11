@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ProductService } from "../../services/ProductService";
 import { formatDate } from "@/helpers/formatDate";
+import ProductSkeleton from "../../components/ProductSkeleton";
 
 export default function ProdukHukum() {
   const router = useRouter();
@@ -170,9 +171,10 @@ export default function ProdukHukum() {
 
           {/* Loading State */}
           {loading && (
-            <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-              <p className="text-gray-600">Memuat data...</p>
+            <div className="space-y-4">
+              {[...Array(5)].map((_, index) => (
+                <ProductSkeleton key={index} />
+              ))}
             </div>
           )}
 
@@ -189,7 +191,7 @@ export default function ProdukHukum() {
                       <div className="flex-grow">
                         <div className="flex items-center gap-3 mb-2">
                           <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
-                            {product.bentuk_peraturan || "Tidak Ada Kategori"}
+                            {product.bentuk_peraturan || "Tidak Ada"}
                           </span>
 
                           <span className="text-sm text-gray-500 flex items-center">
@@ -222,7 +224,7 @@ export default function ProdukHukum() {
                       <div className="flex-shrink-0 w-full md:w-auto flex gap-2">
                         <button
                           onClick={() => handleDetailClick(product)}
-                          className="flex items-center justify-center w-full md:w-auto px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-primary hover:text-white hover:border-primary transition-all"
+                          className="flex items-center justify-center w-full md:w-auto px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-primary hover:text-white hover:border-primary transition-all cursor-pointer"
                         >
                           Detail
                           <svg

@@ -319,11 +319,10 @@ export default function Home() {
                 products.map((product) => (
                   <div key={product.id} className="group">
                     <div className="bg-white rounded-xl p-6 border border-gray-100 hover:shadow-md hover:border-blue-200 transition-all flex flex-col md:flex-row gap-6 items-start md:items-center">
-                      {/* ---- Bagian Kiri ---- */}
                       <div className="flex-grow">
                         <div className="flex items-center gap-3 mb-2">
                           <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
-                            {product.bentuk_peraturan}
+                            {product.bentuk_peraturan || "Tidak Ada"}
                           </span>
                           <span className="text-sm text-gray-500">
                             {formatDate(product.created_at, "long")}
@@ -342,7 +341,7 @@ export default function Home() {
                       <div className="flex-shrink-0 mt-4 md:mt-0 flex gap-2">
                         <button
                           onClick={() => handleDetailClick(product)}
-                          className="flex items-center justify-center w-full md:w-auto px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-primary hover:text-white hover:border-primary transition-all"
+                          className="flex items-center justify-center w-full md:w-auto px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-primary hover:text-white hover:border-primary transition-all cursor-pointer"
                         >
                           Detail
                           <svg
@@ -360,13 +359,12 @@ export default function Home() {
                           </svg>
                         </button>
 
-                        {/* Tombol Unduh — Only if file available */}
                         {product.url_file && (
                           <a
                             href={product.url_file}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center px-4 py-2 bg-green-50 border border-green-200 rounded-lg text-sm font-medium text-green-700 hover:bg-green-100 hover:text-green-800 hover:border-green-300 transition-all shadow-sm"
+                            className="flex items-center px-4 py-2 bg-green-50 border border-green-200 rounded-lg text-sm font-medium text-green-700 hover:bg-green-100 hover:text-green-800 hover:border-green-300 transition-all shadow-sm crusor-pointer"
                           >
                             Unduh
                             <svg

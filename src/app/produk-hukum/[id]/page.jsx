@@ -155,11 +155,12 @@ export default function RegulationDetail() {
 
             <div className="bg-gray-50 px-6 py-4 border-t border-gray-100 flex justify-end gap-3">
               <button
-                onClick={() => router.push("/produk-hukum")}
-                className="px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition-colors shadow-sm"
+                onClick={() => router.back()}
+                className="px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition-colors shadow-sm cursor-pointer"
               >
                 Kembali
               </button>
+
               {data.url_file ? (
                 <a
                   href={data.url_file}
