@@ -1,7 +1,7 @@
 "use client";
 
 import Navbar from "../components/Navbar";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -27,6 +27,8 @@ import { ProductService } from "../services/ProductService";
 //HELPER
 import { formatDate } from "../helpers/formatDate";
 import { PostService } from "@/services/PostService";
+import BeritaSkeleton from "../components/BeritaSkeleton";
+import ProductSkeleton from "../components/ProductSkeleton";
 
 ChartJS.register(
   CategoryScale,
@@ -37,7 +39,7 @@ ChartJS.register(
   Legend
 );
 
-export default function Home() {
+function HomeContent() {
   const [searchQuery, setSearchQuery] = useState("");
   //STATE DATA
   const [products, setProducts] = useState([]);
@@ -311,10 +313,11 @@ export default function Home() {
 
             <div className="grid gap-6">
               {loading ? (
-                <div className="col-span-full text-center py-12 bg-white rounded-xl border border-gray-100">
-                  <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-                  <p className="mt-4 text-gray-600">Memuat produk hukum...</p>
-                </div>
+                <>
+                  {[...Array(3)].map((_, index) => (
+                    <ProductSkeleton key={index} />
+                  ))}
+                </>
               ) : products.length > 0 ? (
                 products.map((product) => (
                   <div key={product.id} className="group">
@@ -364,7 +367,7 @@ export default function Home() {
                             href={product.url_file}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center px-4 py-2 bg-green-50 border border-green-200 rounded-lg text-sm font-medium text-green-700 hover:bg-green-100 hover:text-green-800 hover:border-green-300 transition-all shadow-sm crusor-pointer"
+                            className="flex items-center px-4 py-2 bg-green-50 border border-green-200 rounded-lg text-sm font-medium text-green-700 hover:bg-green-100 hover:text-green-800 hover:border-green-300 transition-all shadow-sm cursor-pointer"
                           >
                             Unduh
                             <svg
@@ -442,10 +445,11 @@ export default function Home() {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {loadingPost ? (
-                <div className="col-span-full text-center py-12 bg-white rounded-xl border border-gray-100">
-                  <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-                  <p className="mt-4 text-gray-600">Memuat berita...</p>
-                </div>
+                <>
+                  {[...Array(3)].map((_, index) => (
+                    <BeritaSkeleton key={index} />
+                  ))}
+                </>
               ) : news.length > 0 ? (
                 news.map((item) => (
                   <Link
@@ -478,7 +482,7 @@ export default function Home() {
                       <div className="p-6 flex flex-col flex-grow">
                         <div className="flex items-center gap-3 mb-2">
                           <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            {item.category.name}
+                            {item.category.name || "Berita"}
                           </span>
                           <span className="text-sm text-gray-500">
                             {formatDate(item.created_at, "long")}
@@ -613,5 +617,22 @@ export default function Home() {
         </section>
       </main>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-white">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            <p className="mt-4 text-gray-600">Memuat halaman...</p>
+          </div>
+        </div>
+      }
+    >
+      <HomeContent />
+    </Suspense>
   );
 }

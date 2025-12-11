@@ -1,13 +1,13 @@
 "use client";
 
 import Navbar from "../../components/Navbar";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ProductService } from "../../services/ProductService";
 import { formatDate } from "@/helpers/formatDate";
 import ProductSkeleton from "../../components/ProductSkeleton";
 
-export default function ProdukHukum() {
+function ProdukHukumContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const search = searchParams.get("search");
@@ -380,5 +380,28 @@ export default function ProdukHukum() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function ProdukHukum() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex flex-col bg-gray-50">
+          <Navbar />
+          <main className="flex-grow pt-28 pb-16 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto">
+              <div className="space-y-4">
+                {[...Array(5)].map((_, index) => (
+                  <ProductSkeleton key={index} />
+                ))}
+              </div>
+            </div>
+          </main>
+        </div>
+      }
+    >
+      <ProdukHukumContent />
+    </Suspense>
   );
 }
