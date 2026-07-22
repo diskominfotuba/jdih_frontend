@@ -1,275 +1,725 @@
-import Link from 'next/link';
+"use client";
+
+import Navbar from "../components/Navbar";
+import { useState, useEffect, Suspense } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import bannerImage from "../assets/banner_jdih_tuba.jpg";
+import jdihNasional from "../assets/jdih_nasional.png";
+import jdihLampung from "../assets/jdih_lampung.png";
+import tulangBawang from "../assets/tulang.png";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { FileText, Scale, Pencil, Volume2 } from "lucide-react";
+
+//SERVICE
+import { ProductService } from "../services/ProductService";
+
+//HELPER
+import { formatDate } from "../helpers/formatDate";
+import { PostService } from "@/services/PostService";
+import BeritaSkeleton from "../components/BeritaSkeleton";
+import ProductSkeleton from "../components/ProductSkeleton";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
+function HomeContent() {
+  const [searchQuery, setSearchQuery] = useState("");
+  //STATE DATA
+  const [products, setProducts] = useState([]);
+  const [news, setNews] = useState([]);
+  const [chartData, setChartData] = useState(null);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [totalNews, setTotalNews] = useState(0);
+
+  //STATE SURVEI LAYANAN
+  const [showSurveyModal, setShowSurveyModal] = useState(false);
+  const [iframeSrc, setIframeSrc] = useState("about:blank");
+
+  const URL_SURVEI_MENPAN =
+    "https://surveidigital.spbe.go.id/embed/survey/eyJzdXJ2ZXlfaWQiOjIsInNlcnZpY2VfaWQiOjc4MSwiaG9zdCI6Imh0dHBzOi8vamRpaC50dWxhbmdiYXdhbmdrYWIuZ28uaWQiLCJrZXkiOiJiUnR4dVRJTyJ9/embed/view/?jenis_layanan=JDIH";
+
+  //STATE LOADING
+  const [loading, setLoading] = useState(false);
+  const [loadingPost, setLoadingPost] = useState(false);
+  const [loadingChart, setLoadingChart] = useState(true);
+
+  //STATE ERROR
+  const [error, setError] = useState(null);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Lock scroll background saat modal survei terbuka
+  useEffect(() => {
+    if (showSurveyModal) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [showSurveyModal]);
+
+  // Handler Buka & Tutup Survei
+  const handleOpenSurvey = () => {
+    if (iframeSrc === "about:blank") {
+      setIframeSrc(URL_SURVEI_MENPAN);
+    }
+    setShowSurveyModal(true);
+  };
+
+  const handleCloseSurvey = () => {
+    setShowSurveyModal(false);
+  };
+
+  //GET DATA PRODUK
+  const getData = async () => {
+    setLoading(true);
+    try {
+      const response = await ProductService.get();
+      setProducts(response.data.data);
+      setTotalProducts(response.data.pagination.total);
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  //GET DATA BERITA
+  const getNews = async () => {
+    setLoadingPost(true);
+    try {
+      const response = await PostService.get();
+      setNews(response.data.data);
+      setTotalNews(response.data.pagination.total);
+    } catch (error) {
+      console.log(error.message);
+      setError(error.message);
+    } finally {
+      setLoadingPost(false);
+    }
+  };
+
+  //GET DATA FOR CHART
+  const getChartData = async () => {
+    setLoadingChart(true);
+    try {
+      const response = await ProductService.get({ per_page: 1000 });
+      const products = response.data.data;
+
+      const countsByYear = products.reduce((acc, product) => {
+        const year = new Date(product.created_at).getFullYear();
+        if (year) {
+          acc[year] = (acc[year] || 0) + 1;
+        }
+        return acc;
+      }, {});
+
+      const sortedYears = Object.keys(countsByYear).sort();
+
+      const data = {
+        labels: sortedYears,
+        datasets: [
+          {
+            label: "Jumlah Produk Hukum",
+            data: sortedYears.map((year) => countsByYear[year]),
+            backgroundColor: "#00235C",
+            borderColor: "rgba(0, 35, 92, 1)",
+            borderWidth: 1,
+            borderRadius: 5,
+          },
+        ],
+      };
+      setChartData(data);
+    } catch (error) {
+      console.error("Error fetching chart data:", error);
+    } finally {
+      setLoadingChart(false);
+    }
+  };
+
+  //RUN GET DATA
+  useEffect(() => {
+    getData();
+    getNews();
+    getChartData();
+  }, []);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    router.push(`/produk-hukum?search=${searchQuery}`);
+  };
+
+  const categories = [
+    {
+      title: "Peraturan",
+      count: totalProducts,
+      icon: <FileText className="w-6 h-6" />,
+      color: "bg-blue-100 text-blue-600",
+    },
+    {
+      title: "Monografi Hukum",
+      count: 0,
+      icon: <Scale className="w-6 h-6" />,
+      color: "bg-green-100 text-green-600",
+    },
+    {
+      title: "Artikel Hukum",
+      count: totalNews,
+      icon: <Pencil className="w-6 h-6" />,
+      color: "bg-purple-100 text-purple-600",
+    },
+    {
+      title: "Yurisprudensi",
+      count: 0,
+      icon: <Volume2 className="w-6 h-6" />,
+      color: "bg-orange-100 text-orange-600",
+    },
+  ];
+
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top",
+      },
+      title: {
+        display: true,
+        text: "Jumlah Produk Hukum per Tahun",
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          stepSize: 1,
+        },
+      },
+    },
+  };
+
+  // HANDLE DETAIL CLICK - SIMPAN DATA KE SESSIONSTORAGE
+  const handleDetailClick = (product) => {
+    sessionStorage.setItem("productDetail", JSON.stringify(product));
+    router.push(`/produk-hukum/${product.id}`);
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col bg-white relative">
+      <Navbar />
+      <main className="flex-grow pt-20">
+        {/* Hero Section */}
+        <section className="relative bg-primary text-white py-24 lg:py-32 overflow-hidden">
+          <div className="absolute inset-0 z-0">
+            <Image
+              src={bannerImage}
+              alt="JDIH Banner"
+              fill
+              className="object-cover"
+              priority
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-blue-900/85 via-blue-800/80 to-blue-900/85" />
+          </div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">
+              JDIH Kabupaten Tulang Bawang
+            </h1>
+            <p className="text-xl md:text-2xl mb-10 text-blue-100 max-w-3xl mx-auto">
+              Wadah informasi hukum yang terintegrasi, lengkap, dan mudah
+              diakses untuk masyarakat Tulang Bawang.
+            </p>
+
+            <div className="max-w-2xl mx-auto">
+              <form onSubmit={handleSearch} className="relative">
+                <input
+                  type="text"
+                  placeholder="Cari produk hukum (contoh: pajak daerah)..."
+                  className="w-full px-6 py-4 rounded-full text-gray-900 bg-white focus:outline-none focus:ring-4 focus:ring-blue-400 shadow-lg text-lg placeholder:text-gray-500"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <button
+                  type="submit"
+                  className="absolute cursor-pointer right-2 top-2 bg-yellow-500 text-white p-2.5 rounded-full transition-colors shadow-md"
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                </button>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        {/* Categories / Statistics */}
+        <section className="relative -mt-20 z-30">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {categories.map((cat, index) => (
+                <div
+                  key={index}
+                  className="bg-gradient-to-br from-blue-50 to-white rounded-xl p-6 transform hover:-translate-y-1 transition-transform duration-300 border-b-4 border-primary shadow-sm"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <div
+                      className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl ${cat.color}`}
+                    >
+                      {cat.icon}
+                    </div>
+                    <span className="text-3xl font-bold text-gray-800">
+                      {cat.count}
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-700">
+                    {cat.title}
+                  </h3>
+                  <p className="text-sm text-gray-500 mt-1">Dokumen Tersedia</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Latest Products */}
+        <section className="py-16 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-end mb-10">
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900">
+                  Produk Hukum Terbaru
+                </h2>
+                <p className="mt-2 text-gray-600">
+                  Update dokumen hukum terkini dari Pemerintah Kabupaten Tulang
+                  Bawang
+                </p>
+              </div>
+              <Link
+                href="/produk-hukum"
+                className="hidden md:flex items-center text-gray-900 font-medium hover:text-blue-600 transition-all group"
+              >
+                Lihat Semua
+                <svg
+                  className="w-5 h-5 ml-1 transform transition-transform duration-200 group-hover:translate-x-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"
+                  />
+                </svg>
+              </Link>
+            </div>
+
+            <div className="grid gap-6">
+              {loading ? (
+                <>
+                  {[...Array(3)].map((_, index) => (
+                    <ProductSkeleton key={index} />
+                  ))}
+                </>
+              ) : products.length > 0 ? (
+                products.map((product) => (
+                  <div key={product.id} className="group">
+                    <div className="bg-white rounded-xl p-6 border border-gray-100 hover:shadow-md hover:border-blue-200 transition-all flex flex-col md:flex-row gap-6 items-start md:items-center">
+                      <div className="flex-grow">
+                        <div className="flex items-center gap-3 mb-2">
+                          <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
+                            {product.bentuk_peraturan || "Tidak Ada"}
+                          </span>
+                          <span className="text-sm text-gray-500">
+                            {formatDate(product.created_at, "long")}
+                          </span>
+                        </div>
+
+                        <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors">
+                          {product.judul}
+                        </h3>
+
+                        <p className="text-sm text-gray-600 font-medium">
+                          Nomor Peraturan {product.nomor_peraturan}
+                        </p>
+                      </div>
+
+                      <div className="flex-shrink-0 mt-4 md:mt-0 flex gap-2">
+                        <button
+                          onClick={() => handleDetailClick(product)}
+                          className="flex items-center justify-center w-full md:w-auto px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-primary hover:text-white hover:border-primary transition-all cursor-pointer"
+                        >
+                          Detail
+                          <svg
+                            className="w-4 h-4 ml-2"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M9 5l7 7-7 7"
+                            />
+                          </svg>
+                        </button>
+
+                        {product.url_file && (
+                          <a
+                            href={product.url_file}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={handleOpenSurvey}
+                            className="flex items-center px-4 py-2 bg-green-50 border border-green-200 rounded-lg text-sm font-medium text-green-700 hover:bg-green-100 hover:text-green-800 hover:border-green-300 transition-all shadow-sm cursor-pointer"
+                          >
+                            Unduh
+                            <svg
+                              className="w-4 h-4 ml-2"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                              />
+                            </svg>
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="col-span-full text-center py-12 bg-white rounded-xl border border-gray-100">
+                  <svg
+                    className="w-16 h-16 mx-auto text-gray-300 mb-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <h3 className="text-lg font-medium text-gray-900">
+                    Tidak ada produk hukum ditemukan
+                  </h3>
+                  <p className="text-gray-500 mt-1">
+                    Mohon maaf, saat ini tidak ada produk hukum yang tersedia.
+                  </p>
+                </div>
+              )}
+            </div>
+            <div className="mt-8 text-center md:hidden">
+              <Link
+                href="/produk-hukum"
+                className="inline-flex items-center text-primary font-semibold hover:text-blue-700 transition-colors"
+              >
+                Lihat Semua
+                <svg
+                  className="w-5 h-5 ml-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"
+                  />
+                </svg>
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* News Section */}
+        <section className="py-16 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-10 text-center">
+              Berita Terkini
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {loadingPost ? (
+                <>
+                  {[...Array(3)].map((_, index) => (
+                    <BeritaSkeleton key={index} />
+                  ))}
+                </>
+              ) : news.length > 0 ? (
+                news.map((item) => (
+                  <Link
+                    href={`/berita/${item.id}`}
+                    key={item.id}
+                    className="block group"
+                    onClick={() => {
+                      sessionStorage.setItem(
+                        `post-${item.id}`,
+                        JSON.stringify(item)
+                      );
+                    }}
+                  >
+                    <div className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
+                      <div className="h-48 bg-gray-200 relative">
+                        {item.thumbnail ? (
+                          <Image
+                            src={item.thumbnail}
+                            alt={item.title}
+                            fill
+                            unoptimized
+                            className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-gray-300 text-gray-500">
+                            Image Placeholder
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-6 flex flex-col flex-grow">
+                        <div className="flex items-center gap-3 mb-2">
+                          <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            {item.category.name || "Berita"}
+                          </span>
+                          <span className="text-sm text-gray-500">
+                            {formatDate(item.created_at, "long")}
+                          </span>
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-primary transition-colors flex-grow">
+                          {item.title}
+                        </h3>
+                        <div className="text-primary font-medium hover:text-blue-800 text-sm flex items-center mt-auto">
+                          Baca Selengkapnya
+                          <svg
+                            className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M9 5l7 7-7 7"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                ))
+              ) : (
+                <div className="col-span-full text-center py-12 bg-white rounded-xl border border-gray-100">
+                  <svg
+                    className="w-16 h-16 mx-auto text-gray-300 mb-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <h3 className="text-lg font-medium text-gray-900">
+                    Tidak ada berita ditemukan
+                  </h3>
+                  <p className="text-gray-500 mt-1">
+                    Mohon maaf, saat ini tidak ada berita yang tersedia.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* Grafik Produk Hukum */}
+        <section className="py-16 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-10 text-center">
+              Grafik Produk Hukum
+            </h2>
+            <div className="bg-white p-8 rounded-lg shadow-md">
+              {loadingChart ? (
+                <div className="text-center text-gray-500">
+                  Memuat data grafik...
+                </div>
+              ) : chartData ? (
+                <Bar options={chartOptions} data={chartData} />
+              ) : (
+                <div className="text-center text-gray-500">
+                  Data tidak tersedia.
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* Link Terkait */}
+        <section className="py-16 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-10 text-center">
+              Link Terkait
+            </h2>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 justify-items-center">
+              {[
+                {
+                  img: jdihNasional,
+                  title: "JDIH NASIONAL",
+                  href: "https://jdihn.go.id",
+                },
+                {
+                  img: jdihLampung,
+                  title: "JDIH LAMPUNG",
+                  href: "https://jdih.lampungprov.go.id",
+                },
+                {
+                  img: tulangBawang,
+                  title: "JDIH TULANG BAWANG",
+                  href: "https://jdih-tulangbawangkab.go.id",
+                },
+                {
+                  img: tulangBawang,
+                  title: "JDIH DPRD TULANG BAWANG",
+                  href: "https://dprd.tulangbawangkab.go.id",
+                },
+              ].map((item, i) => (
+                <a
+                  key={i}
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group bg-white w-full max-w-[240px] p-6 rounded-xl shadow-md hover:bg-[#00235C] hover:shadow-xl hover:-translate-y-2 transition-all duration-300 flex flex-col items-center justify-between min-h-[240px] text-center cursor-pointer"
+                >
+                  <div className="w-28 h-28 flex items-center justify-center mb-2">
+                    <Image
+                      src={item.img}
+                      alt={item.title}
+                      width={112}
+                      height={112}
+                      className="w-full h-full object-contain pointer-events-none transition-transform duration-300 group-hover:scale-105"
+                    />
+                  </div>
+
+                  <h3 className="text-[13px] font-semibold text-gray-900 leading-tight transition-all group-hover:text-white">
+                    {item.title}
+                  </h3>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+      </main>
+
+      {/* Floating Button Survei (Pojok Kanan Bawah) */}
+      <button
+        onClick={handleOpenSurvey}
+        className="fixed bottom-6 right-6 z-40 bg-primary hover:bg-blue-800 text-white font-medium px-5 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2.5 cursor-pointer text-sm sm:text-base"
+      >
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+          />
+        </svg>
+        <span>Survei Layanan</span>
+      </button>
+
+      {/* Modal Popup Survei */}
+      {showSurveyModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn"
+          onClick={handleCloseSurvey}
+        >
+          <div
+            className="bg-white w-full max-w-2xl h-[88vh] sm:h-[85vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-100 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header Modal */}
+            <div className="px-6 py-4 bg-gray-50 border-b border-gray-100 flex justify-between items-center flex-shrink-0">
+              <h3 className="text-base font-semibold text-gray-800">
+                Berikan Penilaian Terbaik Anda...
+              </h3>
+              <button
+                onClick={handleCloseSurvey}
+                className="text-gray-400 hover:text-red-500 text-2xl font-bold leading-none p-1 transition-colors cursor-pointer"
+                aria-label="Tutup"
+              >
+                &times;
+              </button>
+            </div>
+
+            {/* Body Modal (Iframe) */}
+            <div className="flex-grow w-full h-full relative overflow-hidden bg-white">
+              <iframe
+                src={iframeSrc}
+                className="w-full h-full border-0 block"
+                allowFullScreen
+                title="Survei Layanan SPBE"
+              ></iframe>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Home() {
   return (
-    <main>
-      {/* Hero Section */}
-      <section id="home" className="hero">
-        <div className="container text-center">
-          <h1 className="hero-title">
-            Penuhi kebutuhan Internet Anda dengan
-            <span className="text-brand"> Samudra Wasesa</span>
-          </h1>
-          <p className="hero-subtitle">
-            Layanan internet terpercaya untuk kebutuhan digital Anda. Nikmati koneksi stabil dan
-            dukungan Tim teknisi profesional kami yang siap membantu Anda dengan layanan terbaik.
-          </p>
-          <div className="flex flex-col md:flex-row justify-center gap-4">
-            <Link href="/register" className="btn btn-primary btn-lg">
-              Daftar Sekarang
-            </Link>
-            <Link href="#pricing" className="btn btn-secondary btn-lg">
-              Lihat Paket
-            </Link>
-          </div>
-
-          {/* Stats */}
-          <div className="stats-grid">
-            <div className="stat-item">
-              <div className="stat-value">1 Gbps</div>
-              <div className="stat-label">Kecepatan Hingga</div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-value">99.9%</div>
-              <div className="stat-label">Uptime SLA</div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-value">24/7</div>
-              <div className="stat-label">Customer Support</div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-value">1000+</div>
-              <div className="stat-label">Pelanggan</div>
-            </div>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-white">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            <p className="mt-4 text-gray-600">Memuat halaman...</p>
           </div>
         </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section id="pricing" className="section bg-white">
-        <div className="container">
-          <h2 className="section-title">Pilihan Paket Internet</h2>
-          <p className="section-desc">Harga transparan, tanpa biaya tersembunyi.</p>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* Paket Basic Small Home */}
-            <div className="pricing-card">
-              <h3 className="card-title">Paket Standar Untuk Rumahan</h3>
-              <div className="card-price">
-                <span className="price-amount">Rp 250rb</span>
-                <span className="price-period">/bulan</span>
-              </div>
-              <p className="card-desc">Broadband High Speed Internet Akses 20 Mbps. <br /><span
-                style={{ fontSize: '0.75rem' }}>Termasuk Pajak 11%</span></p>
-
-              <ul className="feature-list">
-                <li className="feature-item">
-                  <svg className="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                      d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  Distribusi IP Dinamis
-                </li>
-                <li className="feature-item">
-                  <svg className="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                      d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  SLA 98% Wireless Radio
-                </li>
-                <li className="feature-item">
-                  <svg className="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                      d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  SLA 99,4% Fiber Optik
-                </li>
-                <li className="feature-item">
-                  <svg className="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                      d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  Un-Limited tanpa Quota
-                </li>
-                <li className="feature-item">
-                  <svg className="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                      d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  24/7 Support System
-                </li>
-              </ul>
-              <Link href="/register" className="btn btn-secondary btn-full"
-                style={{ marginTop: '2rem', borderColor: 'var(--brand-600)', color: 'var(--brand-600)' }}>
-                Pilih Paket
-              </Link>
-            </div>
-
-            {/* Paket Kemerdekaan (Popular) */}
-            <div className="pricing-card popular">
-              <div className="popular-badge">MOST POPULAR</div>
-              <h3 className="card-title">Paket Kemerdekaan</h3>
-              <div className="card-price">
-                <span className="price-amount">Rp 150rb</span>
-                <span className="price-period">/bulan</span>
-              </div>
-              <p className="card-desc">Broadband High Speed Internet Akses 10 Mbps. <br /><span
-                style={{ fontSize: '0.75rem', color: 'var(--brand-300)' }}>Termasuk Pajak 11%</span></p>
-
-              <ul className="feature-list">
-                <li className="feature-item">
-                  <svg className="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                      d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  Distribusi IP Dinamis
-                </li>
-                <li className="feature-item">
-                  <svg className="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                      d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  SLA 98% Wireless Radio
-                </li>
-                <li className="feature-item">
-                  <svg className="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                      d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  SLA 99,4% Fiber Optik
-                </li>
-                <li className="feature-item">
-                  <svg className="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                      d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  Un-Limited tanpa Quota
-                </li>
-                <li className="feature-item">
-                  <svg className="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                      d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  24/7 Support System
-                </li>
-              </ul>
-              <Link href="/register" className="btn btn-primary btn-full"
-                style={{ marginTop: '2rem', backgroundColor: 'var(--brand-500)' }}>
-                Pilih Paket
-              </Link>
-            </div>
-
-            {/* Paket Office */}
-            <div className="pricing-card">
-              <h3 className="card-title">Paket Kantor</h3>
-              <div className="card-price">
-                <span className="price-amount" style={{ fontSize: '1.8rem' }}>Hubungi Kami</span>
-              </div>
-              <p className="card-desc">High Speed Internet Broadband Dedicated.</p>
-
-              <ul className="feature-list">
-                <li className="feature-item">
-                  <svg className="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                      d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  Distribusi IP Dinamis
-                </li>
-                <li className="feature-item">
-                  <svg className="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                      d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  SLA 98% Wireless Radio
-                </li>
-                <li className="feature-item">
-                  <svg className="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                      d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  SLA 99,4% Fiber Optik
-                </li>
-                <li className="feature-item">
-                  <svg className="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                      d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  Un-Limited tanpa Quota
-                </li>
-                <li className="feature-item">
-                  <svg className="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                      d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  24/7 Support System
-                </li>
-              </ul>
-              <a href="https://wa.me/6285366597833" target="_blank" className="btn btn-secondary btn-full"
-                style={{ marginTop: '2rem', borderColor: 'var(--brand-600)', color: 'var(--brand-600)' }}>
-                Hubungi Kami
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section id="features" className="section bg-slate-50">
-        <div className="container">
-          <h2 className="section-title">Mengapa Memilih Kami?</h2>
-          <p className="section-desc">Kami berkomitmen memberikan layanan terbaik untuk Anda.</p>
-
-          <div className="feature-grid">
-            <div className="feature-box">
-              <div className="feature-icon-box">
-                <svg style={{ width: '1.5rem', height: '1.5rem' }} fill="none" stroke="currentColor"
-                  viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                    d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                </svg>
-              </div>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem' }}>Koneksi Super Cepat</h3>
-              <p style={{ color: 'var(--slate-600)' }}>Nikmati kecepatan internet tanpa batas untuk streaming, gaming,
-                dan bekerja.</p>
-            </div>
-            <div className="feature-box">
-              <div className="feature-icon-box">
-                <svg style={{ width: '1.5rem', height: '1.5rem' }} fill="none" stroke="currentColor"
-                  viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-              </div>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem' }}>Stabil & Terpercaya</h3>
-              <p style={{ color: 'var(--slate-600)' }}>Jaringan fiber optik kami menjamin koneksi stabil di segala
-                cuaca.</p>
-            </div>
-            <div className="feature-box">
-              <div className="feature-icon-box">
-                <svg style={{ width: '1.5rem', height: '1.5rem' }} fill="none" stroke="currentColor"
-                  viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                    d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z">
-                  </path>
-                </svg>
-              </div>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem' }}>Support 24/7</h3>
-              <p style={{ color: 'var(--slate-600)' }}>Tim teknis kami siap membantu Anda kapanpun Anda membutuhkan
-                bantuan.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="section text-center bg-slate-50">
-        <div className="container">
-          <h2 className="section-title">Siap untuk Internet Lebih Cepat?</h2>
-          <Link href="/register" className="btn btn-primary btn-lg" style={{ marginTop: '1.5rem' }}>
-            Daftar Sekarang
-          </Link>
-        </div>
-      </section>
-    </main>
+      }
+    >
+      <HomeContent />
+    </Suspense>
   );
 }
