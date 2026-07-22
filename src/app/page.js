@@ -48,6 +48,13 @@ function HomeContent() {
   const [totalProducts, setTotalProducts] = useState(0);
   const [totalNews, setTotalNews] = useState(0);
 
+  //STATE SURVEI LAYANAN
+  const [showSurveyModal, setShowSurveyModal] = useState(false);
+  const [iframeSrc, setIframeSrc] = useState("about:blank");
+
+  const URL_SURVEI_MENPAN =
+    "https://surveidigital.spbe.go.id/embed/survey/eyJzdXJ2ZXlfaWQiOjIsInNlcnZpY2VfaWQiOjc4MSwiaG9zdCI6Imh0dHBzOi8vamRpaC50dWxhbmdiYXdhbmdrYWIuZ28uaWQiLCJrZXkiOiJiUnR4dVRJTyJ9/embed/view/?jenis_layanan=JDIH";
+
   //STATE LOADING
   const [loading, setLoading] = useState(false);
   const [loadingPost, setLoadingPost] = useState(false);
@@ -57,6 +64,27 @@ function HomeContent() {
   const [error, setError] = useState(null);
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  // Lock scroll background saat modal survei terbuka
+  useEffect(() => {
+    if (showSurveyModal) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [showSurveyModal]);
+
+  // Handler Buka & Tutup Survei
+  const handleOpenSurvey = () => {
+    if (iframeSrc === "about:blank") {
+      setIframeSrc(URL_SURVEI_MENPAN);
+    }
+    setShowSurveyModal(true);
+  };
+
+  const handleCloseSurvey = () => {
+    setShowSurveyModal(false);
+  };
 
   //GET DATA PRODUK
   const getData = async () => {
@@ -72,7 +100,7 @@ function HomeContent() {
     }
   };
 
-  //GET DATA BERITAs
+  //GET DATA BERITA
   const getNews = async () => {
     setLoadingPost(true);
     try {
@@ -192,7 +220,7 @@ function HomeContent() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col bg-white relative">
       <Navbar />
       <main className="flex-grow pt-20">
         {/* Hero Section */}
@@ -367,6 +395,7 @@ function HomeContent() {
                             href={product.url_file}
                             target="_blank"
                             rel="noopener noreferrer"
+                            onClick={handleOpenSurvey}
                             className="flex items-center px-4 py-2 bg-green-50 border border-green-200 rounded-lg text-sm font-medium text-green-700 hover:bg-green-100 hover:text-green-800 hover:border-green-300 transition-all shadow-sm cursor-pointer"
                           >
                             Unduh
@@ -616,6 +645,64 @@ function HomeContent() {
           </div>
         </section>
       </main>
+
+      {/* Floating Button Survei (Pojok Kanan Bawah) */}
+      <button
+        onClick={handleOpenSurvey}
+        className="fixed bottom-6 right-6 z-40 bg-primary hover:bg-blue-800 text-white font-medium px-5 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2.5 cursor-pointer text-sm sm:text-base"
+      >
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+          />
+        </svg>
+        <span>Survei Layanan</span>
+      </button>
+
+      {/* Modal Popup Survei */}
+      {showSurveyModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn"
+          onClick={handleCloseSurvey}
+        >
+          <div
+            className="bg-white w-full max-w-2xl h-[88vh] sm:h-[85vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-100 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header Modal */}
+            <div className="px-6 py-4 bg-gray-50 border-b border-gray-100 flex justify-between items-center flex-shrink-0">
+              <h3 className="text-base font-semibold text-gray-800">
+                Berikan Penilaian Terbaik Anda...
+              </h3>
+              <button
+                onClick={handleCloseSurvey}
+                className="text-gray-400 hover:text-red-500 text-2xl font-bold leading-none p-1 transition-colors cursor-pointer"
+                aria-label="Tutup"
+              >
+                &times;
+              </button>
+            </div>
+
+            {/* Body Modal (Iframe) */}
+            <div className="flex-grow w-full h-full relative overflow-hidden bg-white">
+              <iframe
+                src={iframeSrc}
+                className="w-full h-full border-0 block"
+                allowFullScreen
+                title="Survei Layanan SPBE"
+              ></iframe>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
